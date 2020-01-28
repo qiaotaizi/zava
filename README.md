@@ -9,3 +9,9 @@
 zava -Xjre=$JAVA_HOME/jre java.lang.Object  
 或者在指定了JAVA_HOME环境变量之后  
 zava java.lang.Object
+
+第三章：  
+解析class文件，实现一个简单版的javap命令  
+zava -Xjre=$JAVA_HOME/jre java.lang.String  
+或者  
+zava java.lang.String
