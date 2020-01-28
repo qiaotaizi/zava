@@ -34,36 +34,36 @@ func startJVM(cmd *Cmd) {
 	//}
 	//fmt.Printf("class data:%v\n", classData)
 
-	cf:=loadClass(className,cp)
+	cf := loadClass(className, cp)
 	fmt.Println(cmd.class)
 	printCLassInfo(cf)
 }
 
-func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile{
-	classData,_,err:=cp.ReadClass(className)
-	if err!=nil{
+func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile {
+	classData, _, err := cp.ReadClass(className)
+	if err != nil {
 		panic(err)
 	}
-	cf,err:=classfile.Parse(classData)
-	if err!=nil{
+	cf, err := classfile.Parse(classData)
+	if err != nil {
 		panic(err)
 	}
 	return cf
 }
 
-func printCLassInfo(cf *classfile.ClassFile){
-	fmt.Printf("version: %v.%v\n",cf.MajorVersion(),cf.MinorVersion())
-	fmt.Printf("constants count: %v\n",len(cf.ConstantPool()))
-	fmt.Printf("access flags: 0x%x\n",cf.AccessFlag())
-	fmt.Printf("this class: %v\n",cf.ThisClass())
-	fmt.Printf("super class: %v\n",cf.SuperClass())
-	fmt.Printf("interfaces: %v\n",cf.InterfaceNames())
+func printCLassInfo(cf *classfile.ClassFile) {
+	fmt.Printf("version: %v.%v\n", cf.MajorVersion(), cf.MinorVersion())
+	fmt.Printf("constants count: %v\n", len(cf.ConstantPool()))
+	fmt.Printf("access flags: 0x%x\n", cf.AccessFlag())
+	fmt.Printf("this class: %v\n", cf.ThisClass())
+	fmt.Printf("super class: %v\n", cf.SuperClass())
+	fmt.Printf("interfaces: %v\n", cf.InterfaceNames())
 	fmt.Printf("fields count: %v\n", len(cf.Fields()))
-	for _,f := range cf.Fields() {
-		fmt.Printf("	%s\n",f.Name())
+	for _, f := range cf.Fields() {
+		fmt.Printf("	%s\n", f.Name())
 	}
 	fmt.Printf("methods count: %v\n", len(cf.Methods()))
 	for _, info := range cf.Methods() {
-		fmt.Printf("	%s\n",info.Name())
+		fmt.Printf("	%s\n", info.Name())
 	}
 }

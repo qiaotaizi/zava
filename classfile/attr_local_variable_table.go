@@ -10,6 +10,3 @@ type LocalVariableTableAttribute struct {
 func (l LocalVariableTableAttribute) readInfo(reader *ClassReader) {
 	panic("implement me")
 }
-
-
-
