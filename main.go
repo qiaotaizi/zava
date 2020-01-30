@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/qiaotaizi/zava/classfile"
 	"github.com/qiaotaizi/zava/classpath"
-	"strings"
+	"github.com/qiaotaizi/zava/rtda"
 )
 
 var version = "version 0.0.1"
@@ -20,23 +20,68 @@ func main() {
 	}
 }
 
-func startJVM(cmd *Cmd) {
-	cp := classpath.Parse(cmd.xJreOption, cmd.cpOption)
-	fmt.Printf("classpath: %s class: %s args: %v\n", cmd.cpOption, cmd.class, cmd.args)
+//1,2,3章startJVM
+//func startJVM(cmd *Cmd) {
+//	cp := classpath.Parse(cmd.xJreOption, cmd.cpOption)
+//	fmt.Printf("classpath: %s class: %s args: %v\n", cmd.cpOption, cmd.class, cmd.args)
+//
+//	className := strings.Replace(cmd.class, ".", "/", -1) //-1表示替换所有
+//
+//	//找到类并打印字节码
+//	//classData, _, err := cp.ReadClass(className)
+//	//if err != nil {
+//	//	fmt.Printf("Could not find or load main class %s\n", cmd.class)
+//	//	return
+//	//}
+//	//fmt.Printf("class data:%v\n", classData)
+//
+//	cf := loadClass(className, cp)
+//	fmt.Println(cmd.class)
+//	printCLassInfo(cf)
+//}
 
-	className := strings.Replace(cmd.class, ".", "/", -1) //-1表示替换所有
+//4章startJVM
+func startJVM(cmd *Cmd){
+	frame:=rtda.NewFrame(100,100)
+	println("testLocalVars")
+	testLocalVars(frame.LocalVars())
+	println()
+	println("testOperandStack")
+	testOperandStack(frame.OperandStack())
+}
 
-	//找到类并打印字节码
-	//classData, _, err := cp.ReadClass(className)
-	//if err != nil {
-	//	fmt.Printf("Could not find or load main class %s\n", cmd.class)
-	//	return
-	//}
-	//fmt.Printf("class data:%v\n", classData)
+func testOperandStack(operandStack *rtda.OperandStack) {
+	operandStack.PushInt(100)
+	operandStack.PushInt(-100)
+	operandStack.PushLong(2997924580)
+	operandStack.PushLong(-2997924580)
+	operandStack.PushFloat(3.1415926)
+	operandStack.PushDouble(2.71828182845)
+	operandStack.PushRef(nil)
+	println("popRef",operandStack.PopRef())
+	println("popDouble",operandStack.PopDouble())
+	println("popFloat",operandStack.PopFloat())
+	println("popLong",operandStack.PopLong())
+	println("popLong",operandStack.PopLong())
+	println("popInt",operandStack.PopInt())
+	println("popInt",operandStack.PopInt())
+}
 
-	cf := loadClass(className, cp)
-	fmt.Println(cmd.class)
-	printCLassInfo(cf)
+func testLocalVars(localVars rtda.LocalVars) {
+	localVars.SetInt(0,100)
+	localVars.SetInt(1,-100)
+	localVars.SetLong(2,2997924580)
+	localVars.SetLong(4,-2997924580)
+	localVars.SetFloat(6,3.1415926)
+	localVars.SetDouble(7,2.71828182845)
+	localVars.SetRef(9,nil)
+	println("getInt",localVars.GetInt(0))
+	println("getInt",localVars.GetInt(1))
+	println("getLong",localVars.GetLong(2))
+	println("getLong",localVars.GetLong(4))
+	println("getFloat",localVars.GetFloat(6))
+	println("getDouble",localVars.GetDouble(7))
+	println("getReg",localVars.GetReg(9))
 }
 
 func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile {

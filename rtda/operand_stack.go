@@ -50,9 +50,9 @@ func (o *OperandStack) PushLong(val int64) {
 
 func (o *OperandStack) PopLong() int64 {
 	o.size -= 2
-	low := o.slots[o.size].num
-	high := o.slots[o.size+1].num
-	return int64(high)<<32 - int64(low)
+	low := uint32(o.slots[o.size].num)
+	high := uint32(o.slots[o.size+1].num)
+	return int64(high)<<32 + int64(low)
 }
 
 //double转long处理

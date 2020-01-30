@@ -14,3 +14,11 @@ func NewFrame(maxLocals, maxStack uint) *Frame {
 		//存储在class文件的method_info结构的Code属性中
 	}
 }
+
+func (f *Frame) LocalVars()LocalVars{
+	return f.localVars
+}
+
+func (f *Frame) OperandStack() *OperandStack{
+	return f.operandStack
+}

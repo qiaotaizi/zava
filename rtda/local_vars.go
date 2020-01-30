@@ -34,14 +34,14 @@ func (l LocalVars) GetFloat(index uint) float32 {
 
 //long拆成两个连续的slot
 func (l LocalVars) SetLong(index uint, val int64) {
-	l[index].num = int32(val)       //截断，保留低位
-	l[index].num = int32(val >> 32) //保留高位
+	l[index].num = int32(val)         //截断，保留低位
+	l[index+1].num = int32(val >> 32) //保留高位
 }
 
 func (l LocalVars) GetLong(index uint) int64 {
 	low := uint32(l[index].num)
 	high := uint32(l[index+1].num)
-	return int64(high)<<32 - int64(low) //这个二进制运算是怎么回事？
+	return int64(high)<<32 + int64(low) //这个二进制运算是怎么回事？
 }
 
 //double转成long，然后按照和long一样处理
