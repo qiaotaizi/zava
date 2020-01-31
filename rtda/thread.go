@@ -11,6 +11,10 @@ func NewThread() *Thread {
 	return &Thread{stack: newStack(1024)} //最大栈帧1024
 }
 
+func (t *Thread)NewFrame(maxLocals,maxStack uint)*Frame{
+	return newFrame(t,maxLocals,maxStack)
+}
+
 func (t *Thread) PC() int {
 	return t.pc
 }

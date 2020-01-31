@@ -12,6 +12,18 @@ type CodeAttribute struct {
 	attributes     []AttributeInfo
 }
 
+func (c *CodeAttribute)MaxStack()uint{
+	return uint(c.maxStack)
+}
+
+func (c *CodeAttribute)MaxLocals()uint{
+	return uint(c.maxLocals)
+}
+
+func (c *CodeAttribute)Code()[]byte{
+	return c.code
+}
+
 func (c *CodeAttribute) readInfo(reader *ClassReader) {
 	c.maxStack = reader.readUint16()
 	c.maxLocals = reader.readUint16()

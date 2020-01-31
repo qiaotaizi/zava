@@ -17,4 +17,10 @@ zava -Xjre=$JAVA_HOME/jre java.lang.String
 zava java.lang.String
 
 第四章：  
-实现虚拟机栈
+实现虚拟机栈  
+
+第五章：  
+实现大部分的虚拟机指令  
+实现解释器  
+现在可以在这个虚拟机上运行简单的java代码了！
+

@@ -5,6 +5,10 @@ type BytecodeReader struct {
 	pc   int    //记录读取到了哪个字节
 }
 
+func (r *BytecodeReader)PC()int{
+	return r.pc
+}
+
 //重置为初始化状态
 func (r *BytecodeReader) Reset(code []byte, pc int) {
 	r.code = code
@@ -40,4 +44,20 @@ func (r *BytecodeReader) ReadInt32() int32 {
 	byte3 := int32(r.ReadUint8())
 	byte4 := int32(r.ReadUint8())
 	return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4
+}
+
+//tableswitch指令操作码后有0~3字节的padding
+//用以保证defaultOffset在字节码中的地址是4的倍数
+func (r *BytecodeReader) SkipPadding() {
+	for r.pc%4!=0{
+		r.ReadUint8()
+	}
+}
+
+func (r *BytecodeReader) ReadInt32s(count int32) []int32 {
+	ints:=make([]int32 ,count)
+	for i:=range ints{
+		ints[i]=r.ReadInt32()
+	}
+	return ints
 }

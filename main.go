@@ -5,6 +5,7 @@ import (
 	"github.com/qiaotaizi/zava/classfile"
 	"github.com/qiaotaizi/zava/classpath"
 	"github.com/qiaotaizi/zava/rtda"
+	"strings"
 )
 
 var version = "version 0.0.1"
@@ -41,14 +42,14 @@ func main() {
 //}
 
 //4章startJVM
-func startJVM(cmd *Cmd){
-	frame:=rtda.NewFrame(100,100)
-	println("testLocalVars")
-	testLocalVars(frame.LocalVars())
-	println()
-	println("testOperandStack")
-	testOperandStack(frame.OperandStack())
-}
+//func startJVM(cmd *Cmd){
+//	frame:=rtda.newFrame(100,100)
+//	println("testLocalVars")
+//	testLocalVars(frame.LocalVars())
+//	println()
+//	println("testOperandStack")
+//	testOperandStack(frame.OperandStack())
+//}
 
 func testOperandStack(operandStack *rtda.OperandStack) {
 	operandStack.PushInt(100)
@@ -81,7 +82,7 @@ func testLocalVars(localVars rtda.LocalVars) {
 	println("getLong",localVars.GetLong(4))
 	println("getFloat",localVars.GetFloat(6))
 	println("getDouble",localVars.GetDouble(7))
-	println("getReg",localVars.GetReg(9))
+	println("getReg",localVars.GetRef(9))
 }
 
 func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile {
@@ -111,4 +112,29 @@ func printCLassInfo(cf *classfile.ClassFile) {
 	for _, info := range cf.Methods() {
 		fmt.Printf("	%s\n", info.Name())
 	}
+}
+
+//5章startJVM
+func startJVM(cmd *Cmd){
+	cp:=classpath.Parse(cmd.xJreOption,cmd.cpOption)
+	className:=strings.Replace(cmd.class,".","/",-1)
+	cf:=loadClass(className,cp)
+	mainMethod:=getMainMethod(cf)
+	if mainMethod!=nil{
+		interpreter(mainMethod)
+	}else{
+		fmt.Printf("Main method not found in class %s\n",cmd.class)
+	}
+}
+
+//在类文件中查找main方法
+func getMainMethod(cf *classfile.ClassFile) *classfile.MemberInfo {
+	methods:=cf.Methods()
+	for _,method:=range methods{
+		if method.Name()=="main" && method.Descriptor()=="([Ljava/lang/String;)V"{
+			return method
+
+		}
+	}
+	return nil
 }

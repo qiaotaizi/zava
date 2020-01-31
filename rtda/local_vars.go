@@ -59,6 +59,6 @@ func (l LocalVars) SetRef(index uint, val *Object) {
 	l[index].ref = val
 }
 
-func (l LocalVars) GetReg(index uint64) *Object {
+func (l LocalVars) GetRef(index uint) *Object {
 	return l[index].ref
 }

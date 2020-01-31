@@ -13,9 +13,9 @@ func (s *Stack) push(frame *Frame) {
 	}
 	if s._top != nil {
 		frame.lower = s._top
-		s._top = frame
-		s.size++
 	}
+	s._top = frame
+	s.size++
 }
 
 //帧出栈
