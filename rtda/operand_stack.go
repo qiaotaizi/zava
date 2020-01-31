@@ -77,3 +77,14 @@ func (o *OperandStack) PopRef() *Object {
 	o.slots[o.size].ref = nil //帮助GC栈空间
 	return ref
 }
+
+//栈操作指令并不关心数据类型
+func (o *OperandStack) PushSlot(slot Slot){
+	o.slots[o.size]=slot
+	o.size++
+}
+
+func (o *OperandStack) PopSlot()Slot{
+	o.size--
+	return o.slots[o.size]
+}
