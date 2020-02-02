@@ -5,6 +5,7 @@ import (
 	"github.com/qiaotaizi/zava/classfile"
 	"github.com/qiaotaizi/zava/classpath"
 	"github.com/qiaotaizi/zava/rtda"
+	"github.com/qiaotaizi/zava/rtda/heap"
 	"strings"
 )
 
@@ -114,12 +115,15 @@ func printCLassInfo(cf *classfile.ClassFile) {
 	}
 }
 
-//5章startJVM
+//5，6章startJVM
 func startJVM(cmd *Cmd){
 	cp:=classpath.Parse(cmd.xJreOption,cmd.cpOption)
+	classLoader:=heap.NewClassLoader(cp)
 	className:=strings.Replace(cmd.class,".","/",-1)
-	cf:=loadClass(className,cp)
-	mainMethod:=getMainMethod(cf)
+	mainClass:=classLoader.LoadClass(className)
+	mainMethod:=mainClass.GetMainMethod()
+	//cf:=loadClass(className,cp)
+	//mainMethod:=getMainMethod(cf)
 	if mainMethod!=nil{
 		interpreter(mainMethod)
 	}else{

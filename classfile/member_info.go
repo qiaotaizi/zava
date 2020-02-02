@@ -42,10 +42,20 @@ func (self *MemberInfo) Descriptor() string {
 
 //获取方法的code属性
 func (self *MemberInfo) CodeAttribute() *CodeAttribute {
-	for _,attrInfo:=range self.attributes{
+	for _, attrInfo := range self.attributes {
 		switch attrInfo.(type) {
 		case *CodeAttribute:
 			return attrInfo.(*CodeAttribute)
+		}
+	}
+	return nil
+}
+
+func (self *MemberInfo) ConstantValueAttribute() *ConstantValueAttribute {
+	for _, attrInfo := range self.attributes {
+		switch attrInfo.(type) {
+		case *ConstantValueAttribute:
+			return attrInfo.(*ConstantValueAttribute)
 		}
 	}
 	return nil

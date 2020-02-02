@@ -1,6 +1,9 @@
 package rtda
 
-import "math"
+import (
+	"github.com/qiaotaizi/zava/rtda/heap"
+	"math"
+)
 
 //操作数栈
 
@@ -66,12 +69,12 @@ func (o *OperandStack) PopDouble() float64 {
 }
 
 //引用类型
-func (o *OperandStack) PushRef(val *Object) {
+func (o *OperandStack) PushRef(val *heap.Object) {
 	o.slots[o.size].ref = val
 	o.size++
 }
 
-func (o *OperandStack) PopRef() *Object {
+func (o *OperandStack) PopRef() *heap.Object {
 	o.size--
 	ref := o.slots[o.size].ref
 	o.slots[o.size].ref = nil //帮助GC栈空间

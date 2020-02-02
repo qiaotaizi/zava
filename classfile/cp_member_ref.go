@@ -19,7 +19,7 @@ func (c *ConstantMemberrefInfo) readInfo(reader *ClassReader) {
 }
 
 func (c *ConstantMemberrefInfo) ClassName() string {
-	return c.cp.getUtf8(c.classIndex)
+	return c.cp.getClassName(c.classIndex)
 }
 
 func (c *ConstantMemberrefInfo) NameAndDescriptor() (string, string) {
@@ -34,6 +34,6 @@ type ConstantMethodrefInfo struct {
 	ConstantMemberrefInfo
 }
 
-type ConstantInterfaceMethodInfo struct {
+type ConstantInterfaceMethodrefInfo struct {
 	ConstantMemberrefInfo
 }

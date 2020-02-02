@@ -12,15 +12,15 @@ type CodeAttribute struct {
 	attributes     []AttributeInfo
 }
 
-func (c *CodeAttribute)MaxStack()uint{
+func (c *CodeAttribute) MaxStack() uint {
 	return uint(c.maxStack)
 }
 
-func (c *CodeAttribute)MaxLocals()uint{
+func (c *CodeAttribute) MaxLocals() uint {
 	return uint(c.maxLocals)
 }
 
-func (c *CodeAttribute)Code()[]byte{
+func (c *CodeAttribute) Code() []byte {
 	return c.code
 }
 

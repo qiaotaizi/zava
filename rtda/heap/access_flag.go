@@ -1,0 +1,24 @@
+package heap
+
+//类、字段、方法的访问标志
+
+const (
+	ACC_PUBLIC =0x0001//class field method
+	ACC_PRIVATE=0x0002//field method
+	ACC_PROTECTED=0x0004//field method
+	ACC_STATIC=0x0008//field method
+	ACC_FINAL=0x0010//c f m
+	ACC_SUPER =0x0020//c
+	ACC_SYNCHRONIZED=0x0020//m
+	ACC_VOLATILE=0x0040//f
+	ACC_BRIDGE=0x0040//m   ?
+	ACC_TRANSIENT=0x0080//f
+	ACC_VARARGS=0x0080//m 变长参数？
+	ACC_NATIVE=0x0100//m
+	ACC_INTERFACE=0x0200//c
+	ACC_ABSTRACT=0x0400//c m
+	ACC_STRICT=0x0800//m
+	ACC_SYNTHETIC=0x1000//c m f
+	ACC_ANNOTATION=0x0200//c
+	ACC_ENUM=0x4000//c f
+)

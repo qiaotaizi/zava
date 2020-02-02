@@ -2,28 +2,23 @@ package main
 
 import (
 	"fmt"
-	"github.com/qiaotaizi/zava/classfile"
 	"github.com/qiaotaizi/zava/instructions"
 	"github.com/qiaotaizi/zava/instructions/base"
 	"github.com/qiaotaizi/zava/rtda"
+	"github.com/qiaotaizi/zava/rtda/heap"
 )
 
 //解释器
 
-func interpreter(methodInfo *classfile.MemberInfo){
-	//获取方法字节码信息
-	codeAttr:=methodInfo.CodeAttribute()
-	maxLocals:=codeAttr.MaxLocals()
-	maxStack:=codeAttr.MaxStack()
-	bytecode:=codeAttr.Code()
+func interpreter(method *heap.Method){
 	//创建一个Thread实例，为方法创建一个帧，并把它推入虚拟机栈顶，最后执行方法
 	thread:=rtda.NewThread()
-	frame:=thread.NewFrame(maxLocals,maxStack)
+	frame:=thread.NewFrame(method)
 	thread.PushFrame(frame)
 
 	//开启虚拟机指令处理循环
 	defer catchErr(frame)
-	loop(thread,bytecode)
+	loop(thread,method.Code())
 }
 
 //计算pc，解码指令，执行指令

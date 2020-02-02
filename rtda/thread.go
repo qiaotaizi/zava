@@ -1,5 +1,7 @@
 package rtda
 
+import "github.com/qiaotaizi/zava/rtda/heap"
+
 //线程和栈
 
 type Thread struct {
@@ -11,8 +13,8 @@ func NewThread() *Thread {
 	return &Thread{stack: newStack(1024)} //最大栈帧1024
 }
 
-func (t *Thread)NewFrame(maxLocals,maxStack uint)*Frame{
-	return newFrame(t,maxLocals,maxStack)
+func (t *Thread)NewFrame(method *heap.Method)*Frame{
+	return newFrame(t,method)
 }
 
 func (t *Thread) PC() int {
