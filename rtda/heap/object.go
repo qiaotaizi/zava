@@ -12,3 +12,7 @@ func (o *Object) Fields() Slots {
 func (o *Object) IsInstanceOf(class *Class) bool {
 	return class.isAssignableFrom(o.class)
 }
+
+func (o *Object)Class()*Class{
+	return o.class
+}

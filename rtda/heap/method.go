@@ -10,6 +10,11 @@ type Method struct {
 	maxStack uint
 	maxLocals uint
 	code []byte
+	argSlotCount uint
+}
+
+func (m *Method) ArgSlotCount()uint{
+	return m.argSlotCount
 }
 
 //maxStack maxLocals code等信息
@@ -30,6 +35,7 @@ func newMethods(class *Class ,cfMethods []*classfile.MemberInfo)[]*Method{
 		methods[i].class=class
 		methods[i].copyMemberInfo(method)
 		methods[i].copyAttributes(method)
+		methods[i].calArgSlotCount()
 	}
 	return methods
 }
@@ -76,4 +82,21 @@ func (m *Method) MaxStack() uint {
 
 func (m *Method)Code()[]byte{
 	return m.code
+}
+
+//计算方法参数数量
+func (m *Method) calArgSlotCount() {
+	parsedDescriptor:=parseMethodDescriptor(m.descriptor)
+	for _,paramType:=range parsedDescriptor.parameterTypes{
+		m.argSlotCount++
+		if paramType=="J" || paramType=="D"{
+			m.argSlotCount++//long或double占两个槽
+		}
+	}
+
+	if !m.IsStatic(){
+		m.argSlotCount++//给this引用一个位置
+	}
+
+
 }

@@ -7,15 +7,15 @@ func (c *Class) isAssignableFrom(class *Class) bool {
 	}
 
 	if !t.IsInterface(){
-		return s.isSubClassOf(t)//子类
+		return s.IsSubClassOf(t)//子类
 	}else{
-		return s.isImplements(t)//实现类
+		return s.IsImplements(t) //实现类
 	}
 }
 
-func (cl *Class) isSubClassOf(other *Class) bool {
-	for c:=cl.superClass;c!=nil;c=c.superClass{
-		if c==other{
+func (c *Class) IsSubClassOf(other *Class) bool {
+	for class := c.superClass; class !=nil; class = class.superClass{
+		if class ==other{
 			return true
 		}
 	}
@@ -23,9 +23,13 @@ func (cl *Class) isSubClassOf(other *Class) bool {
 	return false
 }
 
-func (cl *Class)isImplements(iface *Class)bool{
-	for c:=cl;c!=nil;c=c.superClass{
-		for _,i:=range c.interfaces{
+func (c *Class) IsSuperClassOf(other *Class)bool{
+	return other.IsSubClassOf(c)
+}
+
+func (c *Class) IsImplements(iface *Class)bool{
+	for class := c; class !=nil; class = class.superClass{
+		for _,i:=range class.interfaces{
 			if i==iface || i.isSubInterfaceOf(iface){
 				return true
 			}
@@ -35,8 +39,8 @@ func (cl *Class)isImplements(iface *Class)bool{
 	return false
 }
 
-func (cl *Class)isSubInterfaceOf(iface *Class)bool{
-	for _,superInterface:=range cl.interfaces  {
+func (c *Class)isSubInterfaceOf(iface *Class)bool{
+	for _,superInterface:=range c.interfaces  {
 		if superInterface==iface || superInterface.isSubInterfaceOf(iface){
 			return true
 		}

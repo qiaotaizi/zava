@@ -61,10 +61,10 @@ func (c *Class)IsEnum()bool{
 }
 
 func (c *Class) isAccessibleTo(other *Class) bool {
-	return c.IsPublic() || c.getPackageName()==other.getPackageName()
+	return c.IsPublic() || c.GetPackageName()==other.GetPackageName()
 }
 
-func (c *Class) getPackageName() string {
+func (c *Class) GetPackageName() string {
 	if i:=strings.LastIndex(c.name,"/");i>=0{
 		return c.name[:i]
 	}
@@ -95,6 +95,14 @@ func (c *Class) getStaticMethod(name string, descriptor string) *Method {
 		}
 	}
 	return nil
+}
+
+func (c *Class) SuperClass() *Class {
+	return c.superClass
+}
+
+func (c *Class) Name() interface{} {
+	return c.name
 }
 
 func newObject(c *Class) *Object {

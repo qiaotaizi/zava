@@ -118,14 +118,14 @@ func printCLassInfo(cf *classfile.ClassFile) {
 //5，6章startJVM
 func startJVM(cmd *Cmd){
 	cp:=classpath.Parse(cmd.xJreOption,cmd.cpOption)
-	classLoader:=heap.NewClassLoader(cp)
+	classLoader:=heap.NewClassLoader(cp,cmd.verboseClassFlag)
 	className:=strings.Replace(cmd.class,".","/",-1)
 	mainClass:=classLoader.LoadClass(className)
 	mainMethod:=mainClass.GetMainMethod()
 	//cf:=loadClass(className,cp)
 	//mainMethod:=getMainMethod(cf)
 	if mainMethod!=nil{
-		interpreter(mainMethod)
+		interpreter(mainMethod,cmd.verboseInstFlag)
 	}else{
 		fmt.Printf("Main method not found in class %s\n",cmd.class)
 	}

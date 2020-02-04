@@ -91,3 +91,7 @@ func (o *OperandStack) PopSlot()Slot{
 	o.size--
 	return o.slots[o.size]
 }
+
+func (o *OperandStack) GetRefFromTop(count uint) *heap.Object {
+	return o.slots[o.size-1-count].ref
+}

@@ -37,5 +37,13 @@ func (t *Thread) PopFrame() *Frame {
 
 //获取当前帧
 func (t *Thread) CurrentFrame() *Frame {
-	return nil
+	return t.stack.top()
+}
+
+func (t *Thread) TopFrame() *Frame {
+	return t.CurrentFrame()
+}
+
+func (t *Thread) IsStackEmpty() bool {
+	return t.stack.isEmpty()
 }

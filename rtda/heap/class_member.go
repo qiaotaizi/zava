@@ -48,11 +48,11 @@ func (cm *ClassMember) isAccessibleTo(other *Class) bool{
 	c:=cm.class//成员所属类
 	//protected
 	if cm.IsProtected(){
-		return other==c || other.isSubClassOf(c) || c.getPackageName()==other.getPackageName()
+		return other==c || other.IsSubClassOf(c) || c.GetPackageName()==other.GetPackageName()
 	}
 	//friendly
 	if !cm.IsPrivate(){
-		return c.getPackageName()==other.getPackageName()
+		return c.GetPackageName()==other.GetPackageName()
 	}
 	//private
 	return other==c
