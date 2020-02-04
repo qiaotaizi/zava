@@ -19,6 +19,15 @@ type Class struct {
 	instanceSlotCount uint //实例变量占据的空间大小
 	staticSlotCount uint //类变量占据的空间大小
 	staticVars Slots //静态变量(多线程共享变量)
+	initStarted bool//<clinit>是否已经开始执行
+}
+
+func (c *Class)InitStarted()bool{
+	return c.initStarted
+}
+
+func (c *Class)StartInit(){
+	c.initStarted=true
 }
 
 //将类文件转换为类对象
@@ -103,6 +112,10 @@ func (c *Class) SuperClass() *Class {
 
 func (c *Class) Name() interface{} {
 	return c.name
+}
+
+func (c *Class) GetClinitMethod() *Method {
+	return c.getStaticMethod("<clinit>","()V")
 }
 
 func newObject(c *Class) *Object {

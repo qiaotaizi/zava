@@ -1,7 +1,6 @@
 package heap
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -13,7 +12,6 @@ type MethodDescriptorParser struct {
 
 func (p *MethodDescriptorParser) parse(descriptor string) *MethodDescriptor {
 	p.raw=descriptor
-	fmt.Printf("调用方法前解析方法参数描述符：%s\n",descriptor)
 	p.parsed=&MethodDescriptor{}
 	p.startParams()
 	p.parseParamTypes()

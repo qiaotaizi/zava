@@ -43,3 +43,11 @@ func (f *Frame) NextPC()int{
 func (f *Frame) Method() *heap.Method {
 	return f.method
 }
+
+//某些指令调用类的<clinit>方法时使用
+//如果发现初始化方法尚未开始调用，开始调用初始化方法，指令执行到一半直接返回
+//但程序计数器向下移动了
+//这个方法使程序计数器回退一步
+func (f *Frame) RevertNextPC() {
+	f.nextPC=f.thread.pc
+}

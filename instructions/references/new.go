@@ -16,6 +16,11 @@ func (n *NEW) Execute(frame *rtda.Frame) {
 	cp:=frame.Method().Class().ConstantPool()
 	classRef:=cp.GetConstant(n.Index).(*heap.ClassRef)
 	class:=classRef.ResolvedClass()
+	if !class.InitStarted(){
+		frame.RevertNextPC()
+		base.InitClass(frame.Thread(),class)
+		return
+	}
 
 	if class.IsInterface() || class.IsAbstract(){
 		panic("java.lang.InstantiationError")//接口和抽象类无法直接创建实例

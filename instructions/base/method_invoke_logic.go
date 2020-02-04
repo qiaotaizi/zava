@@ -1,6 +1,7 @@
 package base
 
 import (
+	"fmt"
 	"github.com/qiaotaizi/zava/rtda"
 	"github.com/qiaotaizi/zava/rtda/heap"
 )
@@ -15,6 +16,17 @@ func InvokeMethod(invokerFrame *rtda.Frame,method *heap.Method){
 		for i:=argSlotCount-1;i>=0;i--{
 			slot:=invokerFrame.OperandStack().PopSlot()
 			newFrame.LocalVars().SetSlot(uint(i),slot)
+		}
+	}
+
+	//hack,跳过Object类的registerNatives方法，这是一个本地方法
+
+	if method.IsNative(){
+		if method.Name()=="registerNatives"{
+			thread.PopFrame()
+		}else{
+			panic(fmt.Sprintf("native method: %v.%v%v\n",
+				method.Class().Name(),method.Name(),method.Descriptor())) 
 		}
 	}
 }
