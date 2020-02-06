@@ -6,10 +6,35 @@ func (c *Class) isAssignableFrom(class *Class) bool {
 		return true
 	}
 
-	if !t.IsInterface(){
-		return s.IsSubClassOf(t)//子类
+	if !s.IsArray(){
+		if !s.IsInterface(){
+			if !t.IsInterface(){
+				//对于非数组对象，s是class，t是class
+				return s.IsSubClassOf(t)//判断s是t的子类
+			}else{
+				//对于非数组对象，s是class t是interface
+				return s.IsImplements(t)//判断s是t的实现类
+			}
+		}else{
+			if !t.IsInterface(){
+				//对于非数组对象，s是interface，t是class
+				return t.isJlObject()
+			}else{
+				return t.isSuperInterfaceOf(s)
+			}
+		}
 	}else{
-		return s.IsImplements(t) //实现类
+		if !t.IsArray(){
+			if !t.IsInterface(){
+				return t.isJlObject()
+			}else{
+				return t.isJlCloneable() || t.isJioSerializable()
+			}
+		}else{
+			sc:=s.ComponentClass()
+			tc:=s.ComponentClass()
+			return sc==tc || tc.isAssignableFrom(sc)
+		}
 	}
 }
 
@@ -46,4 +71,8 @@ func (c *Class)isSubInterfaceOf(iface *Class)bool{
 		}
 	}
 	return false
+}
+
+func (c *Class) isSuperInterfaceOf(iface *Class) bool {
+	return iface.isSubInterfaceOf(c)
 }

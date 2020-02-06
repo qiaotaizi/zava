@@ -110,7 +110,7 @@ func (c *Class) SuperClass() *Class {
 	return c.superClass
 }
 
-func (c *Class) Name() interface{} {
+func (c *Class) Name() string {
 	return c.name
 }
 
@@ -118,9 +118,38 @@ func (c *Class) GetClinitMethod() *Method {
 	return c.getStaticMethod("<clinit>","()V")
 }
 
-func newObject(c *Class) *Object {
-	return &Object{
-		fields:newSlots(c.instanceSlotCount),
-		class:c,
+func (c *Class) Loader() *ClassLoader {
+	return c.loader
+}
+
+func (c *Class) ArrayClass() *Class {
+	arrayClassName:=getArrayClassName(c.name)
+	return c.loader.loadArrayClass(arrayClassName)
+}
+
+func (c *Class) isJlObject() bool {
+	return c.name=="java/lang/Object"
+}
+
+func (c *Class) isJlCloneable() bool {
+	return c.name=="java/lang/Cloneable"
+}
+
+func (c *Class) isJioSerializable() bool {
+	return c.name=="java/io/Serializable"
+}
+
+//根据字段名和描述符查找字段
+func (c *Class) GetField(name string, descriptor string, isStatic bool) *Field {
+	for class:=c;class!=nil;class=c.superClass{
+		for _,field:=range c.fields{
+			if field.IsStatic()==isStatic &&
+				field.name==name &&
+				field.descriptor==descriptor{
+				return field
+			}
+		}
 	}
+
+	return nil
 }

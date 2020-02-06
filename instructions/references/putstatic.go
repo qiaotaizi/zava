@@ -23,7 +23,7 @@ func (i *PUT_STATIC) Execute(frame *rtda.Frame) {
 
 	if !class.InitStarted(){
 		frame.RevertNextPC()
-		base.InitClass(frame,class)
+		base.InitClass(frame.Thread(),class)
 		return
 	}
 

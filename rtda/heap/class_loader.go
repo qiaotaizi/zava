@@ -26,7 +26,11 @@ func (l *ClassLoader) LoadClass(name string) *Class{
 	if class,ok:=l.classMap[name];ok{
 		return class//类已经加载
 	}
-	return l.loadNonArrayClass(name)
+	if name[0]=='['{
+		return l.loadArrayClass(name)
+	}else{
+		return l.loadNonArrayClass(name)
+	}
 }
 
 //加载非数组类
@@ -82,7 +86,9 @@ func initStaticFinalVar(class *Class, field *Field) {
 			val:=cp.GetConstant(cpIndex).(float64)
 			vars.SetDouble(slotId,val)
 		case "Ljava/lang/String;"://字符串
-			panic("todo")
+			goStr:=cp.GetConstant(cpIndex).(string)
+			jstr:=JString(class.Loader(),goStr)
+			vars.SetRef(slotId,jstr)
 		}
 	}
 }
@@ -137,6 +143,22 @@ func (l *ClassLoader) defineClass(data []byte) *Class {
 	resolveSuperClass(class)
 	resolveInterfaces(class)
 	l.classMap[class.name]=class
+	return class
+}
+
+func (l *ClassLoader) loadArrayClass(name string) *Class {
+	class:=&Class{
+		accessFlags:ACC_PUBLIC, //TODO
+		name:name,
+		loader:l,
+		initStarted:true,//数组类不需要初始化，直接将字段设为true
+		superClass:l.LoadClass("java/lang/Object"),
+		interfaces:[]*Class{
+			l.LoadClass("java/lang/Cloneable"),
+			l.LoadClass("java/io/Serializable"),
+		},
+	}
+	l.classMap[name]=class
 	return class
 }
 

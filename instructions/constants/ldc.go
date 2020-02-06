@@ -7,13 +7,14 @@ import (
 )
 
 //ldc从运行时常量池中加载常量值并推入操作数栈顶
+//ldc=LoaD Constant?
 
 type LDC struct {
 	base.Index8Instruction
 }
 
 func (i *LDC) Execute(frame *rtda.Frame) {
-	_idc(frame,i.Index)
+	_ldc(frame,i.Index)
 }
 
 type LDC_W struct {
@@ -21,13 +22,13 @@ type LDC_W struct {
 }
 
 func (i *LDC_W) Execute(frame *rtda.Frame) {
-	_idc(frame,i.Index)
+	_ldc(frame,i.Index)
 }
 
-func _idc(frame *rtda.Frame, index uint) {
+func _ldc(frame *rtda.Frame, index uint) {
 	stack:=frame.OperandStack()
-	cp:=frame.Method().Class().ConstantPool()
-	c:=cp.GetConstant(index)
+	class:=frame.Method().Class()
+	c:=class.ConstantPool().GetConstant(index)
 
 	switch c.(type) {
 	case int32:
@@ -35,9 +36,11 @@ func _idc(frame *rtda.Frame, index uint) {
 	case float32:
 		stack.PushFloat(c.(float32))
 	case string:
-		panic("impl...")
+		interedString:=heap.JString(class.Loader(),c.(string))
+		stack.PushRef(interedString)
 	case *heap.ClassRef:
-		panic("impl...")
+		panic("impl _idc *heap.ClassRef")
+	//case MethodType,MethodHandle:
 	default:
 		panic("todo: ldc!")
 	}

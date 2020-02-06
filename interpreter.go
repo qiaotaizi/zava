@@ -10,15 +10,28 @@ import (
 
 //解释器
 //logInst参数用于控制是否将指令信息打印到控制台
-func interpreter(method *heap.Method,logInst bool){
+func interpreter(method *heap.Method,logInst bool,args []string){
 	//创建一个Thread实例，为方法创建一个帧，并把它推入虚拟机栈顶，最后执行方法
 	thread:=rtda.NewThread()
 	frame:=thread.NewFrame(method)
 	thread.PushFrame(frame)
 
+	jArgs:=createArgArray(method.Class().Loader(),args)//将命令行参数初始化为java字符串，并传递给main方法
+	frame.LocalVars().SetRef(0,jArgs)
+
 	//开启虚拟机指令处理循环
 	defer catchErr(thread)
 	loop(thread,logInst)
+}
+
+func createArgArray(loader *heap.ClassLoader, args []string) *heap.Object {
+	stringClass:=loader.LoadClass("java/lang/String")
+	argsArr:=stringClass.ArrayClass().NewArray(uint(len(args)))
+	jArgs:=argsArr.Refs()
+	for i,arg:=range args{
+		jArgs[i]=heap.JString(loader,arg)
+	}
+	return argsArr
 }
 
 //计算pc，解码指令，执行指令

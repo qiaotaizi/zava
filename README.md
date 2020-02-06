@@ -30,3 +30,6 @@ zava java.lang.String
 
 第七章：
 实现方法调用  
+
+第八章： 
+实现数组初始化和java.lang.String初始化  
