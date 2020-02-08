@@ -12,6 +12,10 @@ type OperandStack struct {
 	slots []Slot //操作数栈槽
 }
 
+func  (o *OperandStack)Slots() []Slot{
+	return o.slots
+}
+
 func newOperandStack(maxStack uint) *OperandStack {
 	if maxStack > 0 {
 		return &OperandStack{
@@ -81,17 +85,29 @@ func (o *OperandStack) PopRef() *heap.Object {
 	return ref
 }
 
-//栈操作指令并不关心数据类型
-func (o *OperandStack) PushSlot(slot Slot){
-	o.slots[o.size]=slot
+//有时栈操作指令并不关心数据类型
+func (o *OperandStack) PushSlot(slot Slot) {
+	o.slots[o.size] = slot
 	o.size++
 }
 
-func (o *OperandStack) PopSlot()Slot{
+func (o *OperandStack) PopSlot() Slot {
 	o.size--
 	return o.slots[o.size]
 }
 
 func (o *OperandStack) GetRefFromTop(count uint) *heap.Object {
 	return o.slots[o.size-1-count].ref
+}
+
+func (o *OperandStack) PushBoolean(b bool) {
+	if b {
+		o.PushInt(1)
+	} else {
+		o.PushInt(0)
+	}
+}
+
+func (o *OperandStack) PopBoolean() bool {
+	return o.PopInt() == 1
 }

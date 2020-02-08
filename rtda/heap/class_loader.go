@@ -14,11 +14,15 @@ type ClassLoader struct {
 }
 
 func NewClassLoader(cp *classpath.Classpath ,verboseClassFlag bool) *ClassLoader{
-	return &ClassLoader{
+	loader:= &ClassLoader{
 		cp:cp,
 		classMap:make(map[string]*Class),
 		verboseFlag:verboseClassFlag,
 	}
+
+	loader.loadBasicClasses()
+	loader.loadPrimitiveClasses()//加载基本数据类型的类
+	return loader
 }
 
 //类加载器根据类名加载类数据至方法区，并返回Class对象
@@ -26,11 +30,21 @@ func (l *ClassLoader) LoadClass(name string) *Class{
 	if class,ok:=l.classMap[name];ok{
 		return class//类已经加载
 	}
+
+	var class *Class
+
 	if name[0]=='['{
-		return l.loadArrayClass(name)
+		class= l.loadArrayClass(name)
 	}else{
-		return l.loadNonArrayClass(name)
+		class= l.loadNonArrayClass(name)
 	}
+
+	if jlClassClass,ok:=l.classMap["java/lang/Class"];ok{
+		class.jClass=jlClassClass.NewObject()
+		class.jClass.extra=class
+	}
+
+	return class
 }
 
 //加载非数组类
@@ -160,6 +174,39 @@ func (l *ClassLoader) loadArrayClass(name string) *Class {
 	}
 	l.classMap[name]=class
 	return class
+}
+
+//加载任何类之前，先加载java.lang.Class类
+//并给每个已经加载的类关联一个java.lang.Class类对象
+func (l *ClassLoader) loadBasicClasses() {
+	jlClassClass:=l.LoadClass("java/lang/Class")
+	for _,class:=range l.classMap{
+		if class.jClass==nil{
+			class.jClass=jlClassClass.NewObject()
+			class.jClass.extra=class
+		}
+	}
+}
+
+//加载java基本数据类型
+func (l *ClassLoader) loadPrimitiveClasses() {
+	for primitiveType,_:=range primitiveTypes{
+		l.loadPrimitiveClass(primitiveType)
+	}
+}
+
+//加载单个java基本数据类型
+func (l *ClassLoader) loadPrimitiveClass(className string) {
+	class:=&Class{
+		accessFlags:ACC_PUBLIC,
+		name:className,
+		loader:l,
+		initStarted:true,
+	}
+
+	class.jClass=l.classMap["java/lang/Class"].NewObject()
+	class.jClass.extra=class
+	l.classMap[className]=class
 }
 
 func resolveInterfaces(class *Class) {

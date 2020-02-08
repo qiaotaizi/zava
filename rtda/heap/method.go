@@ -30,14 +30,24 @@ func (m *Method) copyAttributes(method *classfile.MemberInfo) {
 //初始化方法表
 func newMethods(class *Class ,cfMethods []*classfile.MemberInfo)[]*Method{
 	methods:=make([]*Method,len(cfMethods))
-	for i,method:=range cfMethods{
-		methods[i]=&Method{}
-		methods[i].class=class
-		methods[i].copyMemberInfo(method)
-		methods[i].copyAttributes(method)
-		methods[i].calArgSlotCount()
+	for i, cfMethod :=range cfMethods{
+		methods[i]=newMethod(class,cfMethod)
 	}
 	return methods
+}
+
+func newMethod(class *Class, cfMethod *classfile.MemberInfo) *Method {
+
+	method:=&Method{}
+	method.class=class
+	method.copyMemberInfo(cfMethod)
+	method.copyAttributes(cfMethod)
+	md:=parseMethodDescriptor(method.descriptor)
+	method.calArgSlotCount(md.parameterTypes)
+	if method.IsNative(){
+		method.injectAttributeCode(md.returnType) //注入本地方法字节码
+	}
+	return method
 }
 
 func (m *Method) IsSynchronized()bool{
@@ -85,9 +95,8 @@ func (m *Method)Code()[]byte{
 }
 
 //计算方法参数数量
-func (m *Method) calArgSlotCount() {
-	parsedDescriptor:=parseMethodDescriptor(m.descriptor)
-	for _,paramType:=range parsedDescriptor.parameterTypes{
+func (m *Method) calArgSlotCount(parameterTypes []string) {
+	for _,paramType:=range parameterTypes{
 		m.argSlotCount++
 		if paramType=="J" || paramType=="D"{
 			m.argSlotCount++//long或double占两个槽
@@ -99,4 +108,24 @@ func (m *Method) calArgSlotCount() {
 	}
 
 
+}
+
+//本地方法字节码注入
+func (m *Method) injectAttributeCode(returnType string) {
+	m.maxStack=4//TODO 暂时写死为4
+	m.maxLocals=m.argSlotCount//本地方法帧的局部变量表用来存放参数值
+	switch returnType[0] {
+	case 'V':
+		m.code=[]byte{0xfe,0xb1}//return
+	case 'D':
+		m.code=[]byte{0xfe,0xaf}//dreturn
+	case 'F':
+		m.code=[]byte{0xfe,0xae}//freturn
+	case 'J':
+		m.code=[]byte{0xfe,0xad}//lreturn
+	case 'L','[':
+		m.code=[]byte{0xfe,0xb0}//areturn
+	default:
+		m.code=[]byte{0xfe,0xac}//ireturn
+	}
 }

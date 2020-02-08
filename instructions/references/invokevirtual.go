@@ -29,6 +29,9 @@ func (i *INVOKE_VIRTUAL) Execute(frame *rtda.Frame) {
 			_println(frame.OperandStack(), methodRef.Descriptor())
 			return
 		}
+		fmt.Println("methodRef.Name=",methodRef.Name())
+		fmt.Println(resolvedMethod.ArgSlotCount())
+		fmt.Println(frame.OperandStack().Slots())
 		panic("java.lang.NullPointerException")
 	}
 

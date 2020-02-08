@@ -56,3 +56,42 @@ func (o *Object)ArrayLength()int32{
 		panic("Not array!")
 	}
 }
+
+func ArrayCopy(src,dst *Object,srcPos,destPos ,length int32){
+	switch src.data.(type) {
+	case []int8:
+		_src:=src.data.([]int8)[srcPos:srcPos+length]
+		_dest:=dst.data.([]int8)[destPos:destPos+length]
+		copy(_dest,_src)
+	case []int16:
+		_src:=src.data.([]int16)[srcPos:srcPos+length]
+		_dest:=dst.data.([]int16)[destPos:destPos+length]
+		copy(_dest,_src)
+	case []int32:
+		_src:=src.data.([]int32)[srcPos:srcPos+length]
+		_dest:=dst.data.([]int32)[destPos:destPos+length]
+		copy(_dest,_src)
+	case []int64:
+		_src:=src.data.([]int64)[srcPos:srcPos+length]
+		_dest:=dst.data.([]int64)[destPos:destPos+length]
+		copy(_dest,_src)
+	case []uint16:
+		_src:=src.data.([]uint16)[srcPos:srcPos+length]
+		_dest:=dst.data.([]uint16)[destPos:destPos+length]
+		copy(_dest,_src)
+	case []float32:
+		_src:=src.data.([]float32)[srcPos:srcPos+length]
+		_dest:=dst.data.([]float32)[destPos:destPos+length]
+		copy(_dest,_src)
+	case []float64:
+		_src:=src.data.([]float64)[srcPos:srcPos+length]
+		_dest:=dst.data.([]float64)[destPos:destPos+length]
+		copy(_dest,_src)
+	case []*Object:
+		_src:=src.data.([]*Object)[srcPos:srcPos+length]
+		_dest:=dst.data.([]*Object)[destPos:destPos+length]
+		copy(_dest,_src)
+	default:
+		panic("Not array!")
+	}
+}

@@ -1,6 +1,9 @@
 package rtda
 
-import "github.com/qiaotaizi/zava/rtda/heap"
+import (
+	"fmt"
+	"github.com/qiaotaizi/zava/rtda/heap"
+)
 
 type Frame struct {
 	lower        *Frame        //链表前一节点
@@ -12,6 +15,7 @@ type Frame struct {
 }
 
 func newFrame(thread *Thread,method *heap.Method)*Frame{
+	fmt.Println("newFrame:method=",method.Name(),"maxLocals=",method.MaxLocals(),"maxOpStack",method.MaxStack())
 	return &Frame{
 		thread:       thread,
 		localVars:newLocalVars(method.MaxLocals()),

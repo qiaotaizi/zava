@@ -20,6 +20,7 @@ type Class struct {
 	staticSlotCount uint //类变量占据的空间大小
 	staticVars Slots //静态变量(多线程共享变量)
 	initStarted bool//<clinit>是否已经开始执行
+	jClass *Object//类的java.lang.Class对象
 }
 
 func (c *Class)InitStarted()bool{
@@ -28,6 +29,10 @@ func (c *Class)InitStarted()bool{
 
 func (c *Class)StartInit(){
 	c.initStarted=true
+}
+
+func (c *Class)JClass()*Object{
+	return c.jClass
 }
 
 //将类文件转换为类对象
@@ -147,6 +152,43 @@ func (c *Class) GetField(name string, descriptor string, isStatic bool) *Field {
 				field.name==name &&
 				field.descriptor==descriptor{
 				return field
+			}
+		}
+	}
+
+	return nil
+}
+
+func (c *Class) JavaName() string {
+	return strings.Replace(c.name,"/",".",-1)
+}
+
+func (c *Class) IsPrimitive() bool {
+	_,ok:=primitiveTypes[c.name]
+	return ok
+}
+
+func (c *Class) GetRefVar(name string, descriptor string) *Object {
+	field:=c.GetField(name,descriptor,true)
+	return c.staticVars.GetRef(field.slotId)
+}
+
+func (c *Class) SetRefVar(name,descriptor string,ref *Object){
+	field:=c.GetField(name,descriptor,true)
+	c.staticVars.SetRef(field.slotId,ref)
+}
+
+func (c *Class) GetInstanceMethod(name string, descriptor string) *Method {
+	return c.getMethod(name,descriptor,false)
+}
+
+func (c *Class) getMethod(name string, descriptor string, isStatic bool) *Method {
+	for class:=c;class!=nil;class=c.superClass{
+		for _,method:=range class.methods{
+			if method.IsStatic()==isStatic &&
+				method.name==name &&
+				method.descriptor==descriptor{
+				return method
 			}
 		}
 	}

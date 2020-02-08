@@ -27,7 +27,7 @@ func (i *INVOKE_SPECIAL) Execute(frame *rtda.Frame) {
 		panic("java.lang.IncompatibleClassChangeError")
 	}
 
-	ref := frame.OperandStack().GetRefFromTop(resolvedMethod.ArgSlotCount()) //在不改变操作数栈状态的情况下获取this引用
+	ref := frame.OperandStack().GetRefFromTop(resolvedMethod.ArgSlotCount() - 1) //在不改变操作数栈状态的情况下获取this引用
 	if ref == nil {
 		panic("java.lang.NullPointerException")
 	}

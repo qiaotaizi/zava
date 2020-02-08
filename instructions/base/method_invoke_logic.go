@@ -8,25 +8,16 @@ import (
 
 func InvokeMethod(invokerFrame *rtda.Frame,method *heap.Method){
 	thread:=invokerFrame.Thread()
+	fmt.Println("new frame of method:",method.Name(),"method arg slot count=",method.ArgSlotCount())
 	newFrame:=thread.NewFrame(method)
 	thread.PushFrame(newFrame)//根据调用方法新建帧并推入栈顶
 
-	argSlotCount:=int(method.ArgSlotCount())//参数传递，实例方法需要额外传递一个this引用
+	argSlotCount:=int(method.ArgSlotCount())
 	if argSlotCount>0{
 		for i:=argSlotCount-1;i>=0;i--{
+			//待调用方法的参数从方法调用者所处的帧操作数栈中弹出，推入待调用方法帧的局部变量表中
 			slot:=invokerFrame.OperandStack().PopSlot()
 			newFrame.LocalVars().SetSlot(uint(i),slot)
-		}
-	}
-
-	//hack,跳过Object类的registerNatives方法，这是一个本地方法
-
-	if method.IsNative(){
-		if method.Name()=="registerNatives"{
-			thread.PopFrame()
-		}else{
-			panic(fmt.Sprintf("native method: %v.%v%v\n",
-				method.Class().Name(),method.Name(),method.Descriptor())) 
 		}
 	}
 }

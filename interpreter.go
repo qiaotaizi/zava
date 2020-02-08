@@ -46,6 +46,7 @@ func loop(thread *rtda.Thread, logInst bool) {
 		//解码为指令
 		reader.Reset(frame.Method().Code(),pc)
 		opCode:=reader.ReadUint8()
+		fmt.Println("i.opCode=",opCode)
 		inst:= instructions.NewInstruction(opCode)
 		inst.FetchOperands(reader)
 		frame.SetNextPC(reader.PC())
