@@ -33,3 +33,9 @@ zava java.lang.String
 
 第八章：  
 实现数组初始化和java.lang.String初始化  
+
+第九章：  
+实现本地方法调用  
+
+第十章：  
+实现异常处理

@@ -21,6 +21,7 @@ type Class struct {
 	staticVars Slots //静态变量(多线程共享变量)
 	initStarted bool//<clinit>是否已经开始执行
 	jClass *Object//类的java.lang.Class对象
+	sourceFile string//源代码文件名
 }
 
 func (c *Class)InitStarted()bool{
@@ -46,7 +47,16 @@ func newClass(cf *classfile.ClassFile)*Class{
 	class.constantPool=newConstantPool(class,cf.ConstantPool())
 	class.fields=newFields(class,cf.Fields())
 	class.methods=newMethods(class,cf.Methods())
+	class.sourceFile=getSourceFile(cf)
 	return class
+}
+
+//从属性表获取源代码信息
+func getSourceFile(cf *classfile.ClassFile) string {
+	if sfAttr:=cf.SourceFileAttributes();sfAttr!=nil{
+		return sfAttr.FileName()
+	}
+	return "Unknown"
 }
 
 func (c *Class)IsPublic() bool{
@@ -194,4 +204,8 @@ func (c *Class) getMethod(name string, descriptor string, isStatic bool) *Method
 	}
 
 	return nil
+}
+
+func (c *Class) SourceFile() string {
+	return c.sourceFile
 }

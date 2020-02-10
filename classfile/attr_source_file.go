@@ -14,3 +14,7 @@ func (s *SourceFileAttribute) readInfo(reader *ClassReader) {
 func (s *SourceFileAttribute) fileName() string {
 	return s.cp.getUtf8(s.sourceFileIndex)
 }
+
+func (s *SourceFileAttribute) FileName() string {
+	return s.cp.getUtf8(s.sourceFileIndex)
+}

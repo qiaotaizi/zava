@@ -49,3 +49,13 @@ func (t *Thread) TopFrame() *Frame {
 func (t *Thread) IsStackEmpty() bool {
 	return t.stack.isEmpty()
 }
+
+
+//清理虚拟机栈
+func (t *Thread) ClearStack() {
+	t.stack.clear()
+}
+
+func (t *Thread) GetFrames() []*Frame {
+	return t.stack.getFrames()
+}

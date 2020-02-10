@@ -111,3 +111,11 @@ func (o *OperandStack) PushBoolean(b bool) {
 func (o *OperandStack) PopBoolean() bool {
 	return o.PopInt() == 1
 }
+
+//清理帧的操作数栈
+func (o *OperandStack) Clear() {
+	o.size=0
+	for i:=range o.slots{
+		o.slots[i].ref=nil
+	}
+}

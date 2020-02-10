@@ -11,6 +11,8 @@ type Method struct {
 	maxLocals uint
 	code []byte
 	argSlotCount uint
+	exceptionTable ExceptionTable
+	lineNumberTable *classfile.LineNumberTableAttribute
 }
 
 func (m *Method) ArgSlotCount()uint{
@@ -24,7 +26,34 @@ func (m *Method) copyAttributes(method *classfile.MemberInfo) {
 		m.maxStack=codeAttr.MaxStack()
 		m.maxLocals=codeAttr.MaxLocals()
 		m.code=codeAttr.Code()
+		m.lineNumberTable=codeAttr.LineNumberTable()
+		m.exceptionTable=newExceptionTable(codeAttr.ExceptionTable(),m.class.constantPool)
 	}
+}
+
+
+//获取pc对应的行号
+func (m *Method)GetLineNumber(pc int)int{
+	if m.IsNative(){
+		return -2
+	}
+
+	//不是每个方法都有行号表
+	if m.lineNumberTable==nil{
+		return -1
+	}
+
+	return m.lineNumberTable.GetLineNumber(pc)
+}
+
+//搜索方法的异常处理表
+func (m *Method)FindExceptionHandler(exClass *Class,pc int)int{
+	handler:=m.exceptionTable.findExceptionHandler(exClass,pc)
+	if handler!=nil{
+		return handler.hanlderPc
+	}
+
+	return -1
 }
 
 //初始化方法表
